@@ -307,7 +307,14 @@ export async function POST() {
     }
 
     const ticketNotes = type === 'ff' && row.team ? (TEAM_MAP[row.team as keyof typeof TEAM_MAP]?.name ?? null) : null
-    const { error: tErr } = await service.from('tickets').insert({ person_id: newPerson.id, type, status, notes: ticketNotes })
+    const ticketPayload: Record<string, unknown> = { person_id: newPerson.id, type, status }
+    if (ticketNotes) ticketPayload.notes = ticketNotes
+    let { error: tErr } = await service.from('tickets').insert(ticketPayload)
+    // If notes column doesn't exist yet, retry without it
+    if (tErr && ticketNotes) {
+      const retry = await service.from('tickets').insert({ person_id: newPerson.id, type, status })
+      tErr = retry.error
+    }
 
     if (tErr) {
       errors.push(`Ticket ${row.fn} ${row.ln}: ${tErr.message}`)
