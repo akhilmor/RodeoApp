@@ -25,7 +25,7 @@ export function StatCard({ label, value, sub, icon: Icon, color = 'indigo' }: {
         )}
         <div>
           <p className="text-sm" style={{ color: 'var(--bat-muted)' }}>{label}</p>
-          <p className="text-2xl font-bold" style={{ color: '#f1f5f9' }}>{value}</p>
+          <p className="font-bold leading-tight" style={{ color: '#f1f5f9', fontSize: typeof value === 'string' && value.length > 8 ? 16 : 24 }}>{value}</p>
           {sub && <p className="text-xs mt-0.5" style={{ color: '#6b7280' }}>{sub}</p>}
         </div>
       </div>
