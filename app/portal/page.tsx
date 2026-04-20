@@ -25,17 +25,18 @@ export default async function PortalPage() {
     .single()
 
   if (!person) {
-    return (
-      <div style={{ minHeight: '100vh', background: '#0a0a0f', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: 'system-ui,sans-serif' }}>
-        <div style={{ textAlign: 'center', maxWidth: 360 }}>
-          <p style={{ color: '#ef4444', fontWeight: 700, fontSize: 16, marginBottom: 8 }}>Account not linked</p>
-          <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 24 }}>Your login exists but no attendee record was found. Contact the organizers to get your account set up.</p>
-          <form action="/auth/signout" method="post">
-            <button style={{ background: '#1a1a24', border: '1px solid #2a2a3a', color: '#e2e8f0', padding: '10px 24px', borderRadius: 10, cursor: 'pointer', fontSize: 14 }}>Sign Out</button>
-          </form>
-        </div>
-      </div>
-    )
+    // Auth exists but no people record — auto-create one so they can proceed
+    const nameParts = (user.user_metadata?.full_name || user.email!.split('@')[0]).split(' ')
+    const firstName = user.user_metadata?.first_name || nameParts[0] || 'Attendee'
+    const lastName = user.user_metadata?.last_name || nameParts.slice(1).join(' ') || ''
+    await service.from('people').insert({
+      first_name: firstName,
+      last_name: lastName,
+      email: user.email!.toLowerCase(),
+      role_type: 'audience',
+      position: 'Audience',
+    })
+    redirect('/portal')
   }
 
   // Route non-attendees to correct place
