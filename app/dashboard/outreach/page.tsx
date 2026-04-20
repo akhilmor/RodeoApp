@@ -13,7 +13,7 @@ type Prospect = {
   email: string | null
   phone: string | null
   website: string | null
-  address: string | null
+  location: string | null
   category: string | null
   status: 'new' | 'contacted' | 'responded' | 'donated' | 'declined'
   last_contacted_at: string | null
@@ -369,7 +369,7 @@ export default function OutreachPage() {
                 </td>
                 <td className="px-4 py-3">
                   <p className="font-medium text-gray-900">{p.business_name}</p>
-                  {p.address && <p className="text-xs text-gray-400 flex items-center gap-1 mt-0.5"><MapPin className="w-3 h-3" />{p.address.split(',').slice(0, 2).join(',')}</p>}
+                  {p.location && <p className="text-xs text-gray-400 flex items-center gap-1 mt-0.5"><MapPin className="w-3 h-3" />{p.location.split(',').slice(0, 2).join(',')}</p>}
                 </td>
                 <td className="px-4 py-3">
                   <span className="text-xs text-gray-600">{p.category || '—'}</span>

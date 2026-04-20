@@ -5,7 +5,7 @@ create table if not exists prospects (
   email text,
   phone text,
   website text,
-  address text,
+  location text,
   city text default 'Austin',
   category text,               -- e.g. Indian Restaurant, Temple, Grocery, Cultural Org
   source text,                 -- google_places, manual, etc.

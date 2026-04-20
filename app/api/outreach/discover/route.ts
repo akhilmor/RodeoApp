@@ -151,7 +151,7 @@ export async function POST(req: NextRequest) {
 
   const newProspects: {
     business_name: string
-    address: string
+    location: string
     phone: string | null
     website: string | null
     email: string | null
@@ -187,7 +187,7 @@ export async function POST(req: NextRequest) {
 
       newProspects.push({
         business_name: details.name || place.name,
-        address: details.formatted_address || place.formatted_address || '',
+        location: details.formatted_address || place.formatted_address || '',
         phone: details.formatted_phone_number || null,
         website,
         email,
