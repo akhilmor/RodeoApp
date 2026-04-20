@@ -244,20 +244,27 @@ export async function POST() {
   let inserted = 0
   const errors: string[] = []
 
-  for (const row of SEED) {
+  for (let i = 0; i < SEED.length; i++) {
+    const row = SEED[i]
     const teamId = row.team ? teamIdMap[row.team] ?? null : null
     const role: string = row.team ? 'competitor' : 'audience'
     const type: string = row.team ? 'ff' : 'public'
+    const position: string = row.team ? 'Competitor' : 'Audience'
     const status = row.pickedup ? 'picked_up' : row.paid ? 'paid' : 'reserved'
+
+    // email is UNIQUE NOT NULL — generate a placeholder if missing
+    const email = row.email?.toLowerCase()
+      || `${row.fn.toLowerCase()}.${row.ln.toLowerCase().replace(/\s+/g, '')}.${i}@show.raasrodeo2026.internal`
 
     const { data: newPerson, error: pErr } = await service
       .from('people')
       .insert({
         first_name: row.fn,
         last_name: row.ln,
-        email: row.email?.toLowerCase() ?? null,
+        email,
         phone: row.phone ?? null,
         role_type: role,
+        position,
         team_id: teamId,
       })
       .select('id')
@@ -268,12 +275,11 @@ export async function POST() {
       continue
     }
 
-    const { error: tErr } = await service.from('tickets').insert({
-      person_id: newPerson.id,
-      type,
-      status,
-      notes: row.notes ?? null,
-    })
+    // notes column requires: ALTER TABLE tickets ADD COLUMN IF NOT EXISTS notes TEXT
+    const ticketRow: Record<string, unknown> = { person_id: newPerson.id, type, status }
+    if (row.notes) ticketRow.notes = row.notes
+
+    const { error: tErr } = await service.from('tickets').insert(ticketRow)
 
     if (tErr) {
       errors.push(`Ticket ${row.fn} ${row.ln}: ${tErr.message}`)
