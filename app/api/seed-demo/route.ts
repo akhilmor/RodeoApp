@@ -252,9 +252,9 @@ export async function POST() {
     const position: string = row.team ? 'Competitor' : 'Audience'
     const status = row.pickedup ? 'picked_up' : row.paid ? 'paid' : 'reserved'
 
-    // email is UNIQUE NOT NULL — generate a placeholder if missing
-    const email = row.email?.toLowerCase()
-      || `${row.fn.toLowerCase()}.${row.ln.toLowerCase().replace(/\s+/g, '')}.${i}@show.raasrodeo2026.internal`
+    // email is UNIQUE NOT NULL — always generate a unique internal address
+    // (real emails are often shared across a family, causing unique violations)
+    const email = `${row.fn.toLowerCase().replace(/\s+/g, '')}.${row.ln.toLowerCase().replace(/\s+/g, '')}.${i}@show.raasrodeo2026.internal`
 
     const { data: newPerson, error: pErr } = await service
       .from('people')
