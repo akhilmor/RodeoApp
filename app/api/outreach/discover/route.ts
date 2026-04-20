@@ -39,21 +39,23 @@ const SEARCH_PRESETS: Record<string, string[]> = {
 async function searchGooglePlaces(query: string): Promise<PlaceResult[]> {
   if (!GOOGLE_API_KEY) return []
 
-  const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${GOOGLE_API_KEY}`
-  const res = await fetch(url)
+  const res = await fetch('https://places.googleapis.com/v1/places:searchText', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Goog-Api-Key': GOOGLE_API_KEY,
+      'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.types,places.websiteUri,places.nationalPhoneNumber',
+    },
+    body: JSON.stringify({ textQuery: query, maxResultCount: 10 }),
+  })
   if (!res.ok) return []
   const data = await res.json()
-  return (data.results || []).slice(0, 10)
+  return (data.places || [])
 }
 
 async function getPlaceDetails(placeId: string): Promise<PlaceDetails | null> {
-  if (!GOOGLE_API_KEY) return null
-
-  const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,formatted_address,formatted_phone_number,website,types&key=${GOOGLE_API_KEY}`
-  const res = await fetch(url)
-  if (!res.ok) return null
-  const data = await res.json()
-  return data.result || null
+  // Details already returned from searchText — this is a no-op with new API
+  return null
 }
 
 async function scrapeEmailFromWebsite(website: string): Promise<string | null> {
@@ -123,10 +125,12 @@ function inferCategory(types: string[], name: string): string {
 }
 
 type PlaceResult = {
-  place_id: string
-  name: string
-  formatted_address?: string
+  id: string
+  displayName?: { text: string }
+  formattedAddress?: string
   types?: string[]
+  websiteUri?: string
+  nationalPhoneNumber?: string
 }
 
 type PlaceDetails = {
@@ -171,33 +175,31 @@ export async function POST(req: NextRequest) {
     const places = await searchGooglePlaces(query)
 
     for (const place of places) {
-      if (existingIds.has(place.place_id)) continue
+      if (existingIds.has(place.id)) continue
 
-      const details = await getPlaceDetails(place.place_id)
-      if (!details) continue
-
-      const website = details.website || null
+      const name = place.displayName?.text || ''
+      const website = place.websiteUri || null
       let email: string | null = null
 
       if (website) {
         email = await scrapeEmailFromWebsite(website)
       }
 
-      const category = inferCategory(details.types || place.types || [], details.name || place.name)
+      const category = inferCategory(place.types || [], name)
 
       newProspects.push({
-        business_name: details.name || place.name,
-        location: details.formatted_address || place.formatted_address || '',
-        phone: details.formatted_phone_number || null,
+        business_name: name,
+        location: place.formattedAddress || '',
+        phone: place.nationalPhoneNumber || null,
         website,
         email,
         category,
         source: 'google_places',
-        google_place_id: place.place_id,
+        google_place_id: place.id,
         status: 'new',
       })
 
-      existingIds.add(place.place_id)
+      existingIds.add(place.id)
     }
 
     // Rate limit between queries
