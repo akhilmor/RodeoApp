@@ -9,7 +9,7 @@ const TEMPLATES: Record<string, {
   html: (name: string, custom?: string) => string
 }> = {
   reminder: {
-    subject: 'Reminder: Raas Rodeo 2026 Ticket Payment',
+    subject: 'Reminder: Raas Rodeo 2026 — A Night in Gotham · Ticket Payment',
     html: (name, custom) => `
       <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px">
         <h2 style="color:#4f46e5">Payment Reminder</h2>
@@ -17,31 +17,31 @@ const TEMPLATES: Record<string, {
         <p>This is a reminder that your Raas Rodeo 2026 ticket payment is still outstanding. Please complete your payment to secure your spot.</p>
         ${custom ? `<p>${custom}</p>` : ''}
         <p>If you have any questions, reply to this email.</p>
-        <p style="color:#6b7280;font-size:14px">— Raas Rodeo 2026 Operations Team</p>
+        <p style="color:#6b7280;font-size:14px">— Raas Rodeo 2026: A Night in Gotham — Operations Team</p>
       </div>
     `,
   },
   confirmation: {
-    subject: 'You\'re Confirmed for Raas Rodeo 2026!',
+    subject: 'You\'re Confirmed — Raas Rodeo 2026: A Night in Gotham (Feb 28, Austin)!',
     html: (name, custom) => `
       <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px">
         <h2 style="color:#4f46e5">You\'re In!</h2>
         <p>Hi ${name},</p>
         <p>Your registration for Raas Rodeo 2026 is confirmed. We can\'t wait to see you at the show!</p>
         ${custom ? `<p>${custom}</p>` : ''}
-        <p style="color:#6b7280;font-size:14px">— Raas Rodeo 2026 Operations Team</p>
+        <p style="color:#6b7280;font-size:14px">— Raas Rodeo 2026: A Night in Gotham — Operations Team</p>
       </div>
     `,
   },
   fundraising: {
-    subject: 'Support Raas Rodeo 2026',
+    subject: 'Support Raas Rodeo 2026: A Night in Gotham',
     html: (name, custom) => `
       <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px">
         <h2 style="color:#4f46e5">Support Raas Rodeo 2026</h2>
         <p>Hi ${name},</p>
         <p>We\'d love your support for Raas Rodeo 2026! Your contribution helps us put on an incredible show for the South Asian dance community.</p>
         ${custom ? `<p>${custom}</p>` : ''}
-        <p style="color:#6b7280;font-size:14px">— Raas Rodeo 2026 Operations Team</p>
+        <p style="color:#6b7280;font-size:14px">— Raas Rodeo 2026: A Night in Gotham — Operations Team</p>
       </div>
     `,
   },
@@ -52,7 +52,7 @@ const TEMPLATES: Record<string, {
         <h2 style="color:#4f46e5">Logistics Update</h2>
         <p>Hi ${name},</p>
         ${custom ? `<p>${custom}</p>` : '<p>Please see the latest logistics information for Raas Rodeo 2026.</p>'}
-        <p style="color:#6b7280;font-size:14px">— Raas Rodeo 2026 Operations Team</p>
+        <p style="color:#6b7280;font-size:14px">— Raas Rodeo 2026: A Night in Gotham — Operations Team</p>
       </div>
     `,
   },
@@ -62,7 +62,7 @@ const TEMPLATES: Record<string, {
       <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px">
         <p>Hi ${name},</p>
         ${custom ? `<p>${custom}</p>` : ''}
-        <p style="color:#6b7280;font-size:14px">— Raas Rodeo 2026 Operations Team</p>
+        <p style="color:#6b7280;font-size:14px">— Raas Rodeo 2026: A Night in Gotham — Operations Team</p>
       </div>
     `,
   },

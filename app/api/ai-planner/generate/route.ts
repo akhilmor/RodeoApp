@@ -4,7 +4,8 @@ import { createClient, createServiceClient } from '@/lib/supabase/server'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 
-const SYSTEM = `You are a logistics scheduling AI for Raas Rodeo 2026 — a competitive college Raas dance show.
+const SYSTEM = `You are a logistics scheduling AI for Raas Rodeo 2026: A Night in Gotham — a competitive college Raas dance show.
+Theme: A Night in Gotham. Show date: February 28, 2026. Venue: Dell Fine Arts Center, Austin TX.
 You generate EXTREMELY DETAILED, minute-by-minute task schedules for every board member.
 
 EVENT STRUCTURE:
@@ -24,8 +25,8 @@ TASK CATEGORIES (use exactly these values):
 
 SCHEDULE GRANULARITY REQUIREMENTS:
 - Generate tasks for EVERY person for EVERY time slot, including 5-15 minute intervals
-- Each task must have a specific start_time and end_time (ISO 8601 format, year 2026, April 24-27)
-- Thursday = April 23, Friday = April 24, Saturday = April 25, Sunday = April 26 (event weekend 2026)
+- Each task must have a specific start_time and end_time (ISO 8601 format)
+- Show date: Saturday February 28, 2026. Thursday = Feb 26, Friday = Feb 27, Saturday = Feb 28, Sunday = March 1
 - Include EXACTLY who does each task by name in the description (e.g. "Saanvika drives Mr.Freeze to hotel")
 - Cover the entire day from wake-up through end-of-night for each person
 - A full day schedule should produce 150-300+ individual tasks covering everyone

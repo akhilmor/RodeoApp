@@ -43,10 +43,10 @@ export async function POST(req: NextRequest) {
   }
 
   const contextKey = day === 'saturday' ? 'saturday_reference_schedule' : 'friday_reference_schedule'
-  const dateStr = day === 'thursday' ? '2026-04-23'
-    : day === 'friday' ? '2026-04-24'
-    : day === 'saturday' ? '2026-04-25'
-    : '2026-04-26'
+  const dateStr = day === 'thursday' ? '2026-02-26'
+    : day === 'friday' ? '2026-02-27'
+    : day === 'saturday' ? '2026-02-28'
+    : '2026-03-01'
 
   const { data: contextRows } = await service
     .from('schedule_context')

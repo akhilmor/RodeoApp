@@ -56,8 +56,8 @@ export function Sidebar({ role }: { role?: string }) {
             </svg>
           </div>
           <div>
-            <p className="font-bold text-sm leading-tight" style={{ color: '#f5c518' }}>Raas Rodeo</p>
-            <p className="text-xs" style={{ color: '#4b5563' }}>{roleLabel} · 2026</p>
+            <p className="font-bold text-sm leading-tight" style={{ color: '#f5c518' }}>Raas Rodeo 2026</p>
+            <p className="text-xs" style={{ color: '#4b5563' }}>A Night in Gotham</p>
           </div>
         </div>
       </div>
