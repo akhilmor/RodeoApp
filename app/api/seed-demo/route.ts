@@ -275,7 +275,7 @@ export async function POST() {
     const teamId = row.team ? teamIdMap[row.team] ?? null : null
     const role: string = (row.team && teamId) ? 'competitor' : 'audience'
     const type: string = (row.team && teamId) ? 'ff' : 'public'
-    const position: string = (row.team && teamId) ? 'Competitor' : 'Audience'
+    const position = 'Audience' // use valid position for all ticket holders
     const status = safeStatus(row.pickedup, row.paid)
 
     const email = `${row.fn.toLowerCase().replace(/\s+/g, '')}.${row.ln.toLowerCase().replace(/\s+/g, '')}.${i}@show.raasrodeo2026.internal`
@@ -299,10 +299,7 @@ export async function POST() {
       continue
     }
 
-    const ticketRow: Record<string, unknown> = { person_id: newPerson.id, type, status }
-    if (row.notes) ticketRow.notes = row.notes
-
-    const { error: tErr } = await service.from('tickets').insert(ticketRow)
+    const { error: tErr } = await service.from('tickets').insert({ person_id: newPerson.id, type, status })
 
     if (tErr) {
       errors.push(`Ticket ${row.fn} ${row.ln}: ${tErr.message}`)
