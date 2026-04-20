@@ -10,7 +10,7 @@ export async function GET() {
   const { data: person } = await service
     .from('people')
     .select('role_type')
-    .eq('email', user.email!)
+    .ilike('email', user.email!)
     .single()
 
   return NextResponse.json({ role: person?.role_type ?? null })

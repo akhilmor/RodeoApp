@@ -21,10 +21,22 @@ export default async function PortalPage() {
   const { data: person } = await service
     .from('people')
     .select('*, teams(name)')
-    .eq('email', user.email!)
+    .ilike('email', user.email!)
     .single()
 
-  if (!person) redirect('/login')
+  if (!person) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#0a0a0f', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: 'system-ui,sans-serif' }}>
+        <div style={{ textAlign: 'center', maxWidth: 360 }}>
+          <p style={{ color: '#ef4444', fontWeight: 700, fontSize: 16, marginBottom: 8 }}>Account not linked</p>
+          <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 24 }}>Your login exists but no attendee record was found. Contact the organizers to get your account set up.</p>
+          <form action="/auth/signout" method="post">
+            <button style={{ background: '#1a1a24', border: '1px solid #2a2a3a', color: '#e2e8f0', padding: '10px 24px', borderRadius: 10, cursor: 'pointer', fontSize: 14 }}>Sign Out</button>
+          </form>
+        </div>
+      </div>
+    )
+  }
 
   // Route non-attendees to correct place
   if (person.role_type === 'captain') redirect('/dancer')
