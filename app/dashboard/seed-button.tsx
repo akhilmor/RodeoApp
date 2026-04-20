@@ -13,15 +13,16 @@ export function SeedButton() {
     try {
       const res = await fetch('/api/seed-demo', { method: 'POST' })
       const data = await res.json()
-      if (data.skipped) {
-        setMsg(data.message)
-        setState('done')
+      if (data.error) {
+        setMsg(`Error: ${data.error}`)
+        setState('error')
       } else if (data.inserted !== undefined) {
-        setMsg(`Imported ${data.inserted} tickets · ${data.teams_created} teams created`)
+        const errNote = data.errors?.length ? ` (${data.errors.length} failed: ${data.errors[0]})` : ''
+        setMsg(`Imported ${data.inserted}/${data.total} tickets${errNote}`)
         setState('done')
         setTimeout(() => window.location.reload(), 1500)
       } else {
-        setMsg(data.error || 'Error')
+        setMsg(JSON.stringify(data).slice(0, 120))
         setState('error')
       }
     } catch {

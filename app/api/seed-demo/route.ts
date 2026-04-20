@@ -232,12 +232,38 @@ export async function POST() {
     .select('id, name')
   if (teamErr) return NextResponse.json({ error: `Teams: ${teamErr.message}` }, { status: 500 })
 
-  // Build name → id map from freshly inserted teams
+  // Re-query teams to build id map (don't rely on insert response)
+  const { data: allTeams } = await service.from('teams').select('id, name')
   const teamIdMap: Record<string, string> = {}
-  for (const t of insertedTeams || []) {
+  for (const t of allTeams || []) {
     for (const [key, val] of Object.entries(TEAM_MAP)) {
       if (val.name === t.name) teamIdMap[key] = t.id
     }
+  }
+
+  if (Object.keys(teamIdMap).length === 0) {
+    return NextResponse.json({ error: 'Team IDs could not be resolved after insert', teams: allTeams }, { status: 500 })
+  }
+
+  // Probe which ticket statuses the DB actually accepts
+  const probeStatuses = ['paid', 'picked_up', 'reserved', 'assigned']
+  const validStatuses = new Set<string>()
+  for (const s of probeStatuses) {
+    // Insert a throwaway ticket with a dummy UUID to test — expect FK error (person not found)
+    // but if we get a CHECK constraint error we know the status is invalid
+    const { error: probeErr } = await service.from('tickets').insert({
+      person_id: '00000000-0000-0000-0000-000000000001',
+      type: 'public', status: s,
+    })
+    // FK violation = status is valid; check constraint = status is invalid
+    if (!probeErr || probeErr.code !== '23514') validStatuses.add(s)
+  }
+
+  // Map statuses to what the DB actually accepts
+  function safeStatus(pickedup: boolean, paid: boolean): string {
+    if (pickedup) return validStatuses.has('picked_up') ? 'picked_up' : 'paid'
+    if (paid)     return 'paid'
+    return validStatuses.has('reserved') ? 'reserved' : 'assigned'
   }
 
   // Insert people and tickets
@@ -247,13 +273,11 @@ export async function POST() {
   for (let i = 0; i < SEED.length; i++) {
     const row = SEED[i]
     const teamId = row.team ? teamIdMap[row.team] ?? null : null
-    const role: string = row.team ? 'competitor' : 'audience'
-    const type: string = row.team ? 'ff' : 'public'
-    const position: string = row.team ? 'Competitor' : 'Audience'
-    const status = row.pickedup ? 'picked_up' : row.paid ? 'paid' : 'reserved'
+    const role: string = (row.team && teamId) ? 'competitor' : 'audience'
+    const type: string = (row.team && teamId) ? 'ff' : 'public'
+    const position: string = (row.team && teamId) ? 'Competitor' : 'Audience'
+    const status = safeStatus(row.pickedup, row.paid)
 
-    // email is UNIQUE NOT NULL — always generate a unique internal address
-    // (real emails are often shared across a family, causing unique violations)
     const email = `${row.fn.toLowerCase().replace(/\s+/g, '')}.${row.ln.toLowerCase().replace(/\s+/g, '')}.${i}@show.raasrodeo2026.internal`
 
     const { data: newPerson, error: pErr } = await service
@@ -265,7 +289,7 @@ export async function POST() {
         phone: row.phone ?? null,
         role_type: role,
         position,
-        team_id: teamId,
+        team_id: (role === 'competitor') ? teamId : null,
       })
       .select('id')
       .single()
@@ -275,7 +299,6 @@ export async function POST() {
       continue
     }
 
-    // notes column requires: ALTER TABLE tickets ADD COLUMN IF NOT EXISTS notes TEXT
     const ticketRow: Record<string, unknown> = { person_id: newPerson.id, type, status }
     if (row.notes) ticketRow.notes = row.notes
 
