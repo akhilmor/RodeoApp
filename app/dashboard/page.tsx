@@ -1,6 +1,7 @@
 import { StatCard } from '@/components/ui/stat-card'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { SeedButton } from './seed-button'
 import { formatCurrency } from '@/lib/utils'
 import { Ticket, DollarSign, Users, AlertCircle, CheckCircle, Package } from 'lucide-react'
 import { createServiceClient } from '@/lib/supabase/server'
@@ -48,9 +49,12 @@ export default async function DashboardPage() {
 
   return (
     <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-500 mt-1">Raas Rodeo operations overview</p>
+      <div className="mb-8 flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-gray-500 mt-1">Raas Rodeo 2026 — A Night in Gotham</p>
+        </div>
+        <SeedButton />
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
