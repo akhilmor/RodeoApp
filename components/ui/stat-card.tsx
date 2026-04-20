@@ -16,7 +16,7 @@ export function StatCard({ label, value, sub, icon: Icon, color = 'indigo' }: {
     purple: 'bg-purple-50 text-purple-600',
   }
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+    <div className="rounded-xl border shadow-sm p-6" style={{ background: 'var(--bat-card)', borderColor: 'var(--bat-border)' }}>
       <div className="flex items-center gap-3">
         {Icon && (
           <div className={cn('p-2 rounded-lg', colors[color])}>
@@ -24,9 +24,9 @@ export function StatCard({ label, value, sub, icon: Icon, color = 'indigo' }: {
           </div>
         )}
         <div>
-          <p className="text-sm text-gray-500">{label}</p>
-          <p className="text-2xl font-bold text-gray-900">{value}</p>
-          {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
+          <p className="text-sm" style={{ color: 'var(--bat-muted)' }}>{label}</p>
+          <p className="text-2xl font-bold" style={{ color: '#f1f5f9' }}>{value}</p>
+          {sub && <p className="text-xs mt-0.5" style={{ color: '#6b7280' }}>{sub}</p>}
         </div>
       </div>
     </div>

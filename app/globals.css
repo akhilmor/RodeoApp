@@ -29,3 +29,40 @@ body {
 ::-webkit-scrollbar-track { background: var(--bat-dark); }
 ::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--bat-gold-dim); }
+
+/* Dark theme overrides — remap light Tailwind classes to dark equivalents */
+.text-gray-900 { color: #f1f5f9 !important; }
+.text-gray-800 { color: #e2e8f0 !important; }
+.text-gray-700 { color: #cbd5e1 !important; }
+.text-gray-600 { color: #94a3b8 !important; }
+.bg-white { background-color: var(--bat-card) !important; }
+.bg-gray-50 { background-color: #111118 !important; }
+.bg-gray-100 { background-color: #1a1a24 !important; }
+.bg-gray-200 { background-color: #22222e !important; }
+.border-gray-100 { border-color: #1e1e2a !important; }
+.border-gray-200 { border-color: #2a2a3a !important; }
+.border-gray-300 { border-color: #3a3a4a !important; }
+.divide-gray-50 > * + * { border-color: #1e1e2a !important; }
+.divide-gray-100 > * + * { border-color: #1e1e2a !important; }
+.divide-gray-200 > * + * { border-color: #2a2a3a !important; }
+.hover\:bg-gray-50:hover { background-color: #16161f !important; }
+.hover\:bg-gray-100:hover { background-color: #1a1a24 !important; }
+
+/* Input / select / textarea on dark bg */
+input, select, textarea {
+  background-color: #1a1a24 !important;
+  color: #e2e8f0 !important;
+  border-color: #2a2a3a !important;
+}
+input::placeholder, textarea::placeholder { color: #4b5563 !important; }
+input:focus, select:focus, textarea:focus {
+  outline-color: var(--bat-gold) !important;
+  border-color: var(--bat-gold) !important;
+}
+
+/* Stat / icon tints on dark bg */
+.bg-indigo-50 { background-color: rgba(99,102,241,0.12) !important; }
+.bg-green-50  { background-color: rgba(34,197,94,0.10) !important; }
+.bg-yellow-50 { background-color: rgba(245,197,24,0.10) !important; }
+.bg-red-50    { background-color: rgba(239,68,68,0.10) !important; }
+.bg-purple-50 { background-color: rgba(168,85,247,0.10) !important; }
