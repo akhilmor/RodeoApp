@@ -7,7 +7,25 @@
 }
 
 body {
-  color: #111827;
-  background: #f9fafb;
+  color: #e5e7eb;
+  background: #0a0a0f;
   -webkit-font-smoothing: antialiased;
 }
+
+:root {
+  --bat-black: #0a0a0f;
+  --bat-dark: #111118;
+  --bat-card: #16161f;
+  --bat-border: #2a2a3a;
+  --bat-gold: #f5c518;
+  --bat-gold-dim: #c49a10;
+  --bat-gold-glow: rgba(245, 197, 24, 0.15);
+  --bat-text: #e5e7eb;
+  --bat-muted: #6b7280;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bat-dark); }
+::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--bat-gold-dim); }

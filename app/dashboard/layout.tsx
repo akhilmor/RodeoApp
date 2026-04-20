@@ -18,9 +18,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const role = person?.role_type ?? 'admin'
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen" style={{ background: 'var(--bat-black)' }}>
       <Sidebar role={role} />
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto" style={{ background: 'var(--bat-black)' }}>
         {children}
       </main>
     </div>
