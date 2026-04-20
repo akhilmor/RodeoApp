@@ -9,22 +9,21 @@ import { createServiceClient } from '@/lib/supabase/server'
 async function getSummary() {
   const supabase = await createServiceClient()
 
-  const [tickets, payments, teams, people] = await Promise.all([
+  const [tickets, teams, people] = await Promise.all([
     supabase.from('tickets').select('id, type, status, person_id'),
-    supabase.from('payments').select('id, amount, status, method'),
     supabase.from('teams').select('id, name, ticket_allocation'),
     supabase.from('people').select('id, team_id, role_type'),
   ])
 
   const allTickets = tickets.data || []
-  const allPayments = payments.data || []
   const allTeams = teams.data || []
   const allPeople = people.data || []
 
+  const TICKET_PRICE_CENTS = 3500
   const paidTickets = allTickets.filter(t => t.status === 'paid' || t.status === 'picked_up').length
   const unpaidTickets = allTickets.filter(t => t.status !== 'paid' && t.status !== 'picked_up').length
   const notPickedUp = allTickets.filter(t => t.status === 'paid').length
-  const confirmedRevenue = allPayments.filter(p => p.status === 'confirmed').reduce((s, p) => s + p.amount, 0)
+  const revenue = paidTickets * TICKET_PRICE_CENTS
   const totalCapacity = allTeams.reduce((s, t) => s + t.ticket_allocation, 0)
 
   const teamBreakdown = allTeams.map(team => {
@@ -38,7 +37,7 @@ async function getSummary() {
     paid: paidTickets,
     unpaid: unpaidTickets,
     notPickedUp,
-    revenue: confirmedRevenue,
+    revenue,
     remaining: Math.max(0, totalCapacity - allTickets.length),
     teamBreakdown,
   }

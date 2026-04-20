@@ -247,6 +247,7 @@ export async function POST() {
   for (const row of SEED) {
     const teamId = row.team ? teamIdMap[row.team] ?? null : null
     const role: string = row.team ? 'competitor' : 'audience'
+    const type: string = row.team ? 'ff' : 'public'
     const status = row.pickedup ? 'picked_up' : row.paid ? 'paid' : 'reserved'
 
     const { data: newPerson, error: pErr } = await service
@@ -269,7 +270,7 @@ export async function POST() {
 
     const { error: tErr } = await service.from('tickets').insert({
       person_id: newPerson.id,
-      type: 'general',
+      type,
       status,
       notes: row.notes ?? null,
     })

@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
-  LayoutDashboard, Users, Ticket, CreditCard,
+  LayoutDashboard, Users, Ticket,
   Shield, ClipboardList, Mail, LogOut, CalendarDays, UserCog
 } from 'lucide-react'
 
@@ -12,7 +12,6 @@ const boardNav = [
   { href: '/dashboard/users', label: 'Users', icon: UserCog },
   { href: '/dashboard/people', label: 'People', icon: Users },
   { href: '/dashboard/tickets', label: 'Tickets', icon: Ticket },
-  { href: '/dashboard/payments', label: 'Payments', icon: CreditCard },
   { href: '/dashboard/teams', label: 'Teams', icon: Shield },
   { href: '/dashboard/logistics', label: 'Logistics', icon: ClipboardList },
   { href: '/dashboard/outreach', label: 'Outreach', icon: Mail },
