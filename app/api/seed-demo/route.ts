@@ -209,27 +209,32 @@ export async function POST() {
   const { data: person } = await service.from('people').select('role_type').eq('email', user.email!).single()
   if (person?.role_type !== 'admin') return NextResponse.json({ error: 'Board only' }, { status: 403 })
 
-  // Idempotency: skip if already seeded
-  const { count } = await service.from('tickets').select('*', { count: 'exact', head: true })
-  if ((count ?? 0) > 10) {
-    return NextResponse.json({ skipped: true, message: `Already seeded (${count} tickets exist). Delete existing tickets to re-seed.` })
+  // Wipe placeholder data (preserve admin/board accounts)
+  // Delete all tickets first (FK), then non-admin people, then all teams
+  await service.from('tickets').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+  const { data: nonAdmins } = await service
+    .from('people')
+    .select('id')
+    .in('role_type', ['audience', 'competitor', 'captain', 'liaison', 'volunteer'])
+  if (nonAdmins && nonAdmins.length > 0) {
+    await service.from('people').delete().in('id', nonAdmins.map(p => p.id))
   }
+  await service.from('teams').delete().neq('id', '00000000-0000-0000-0000-000000000000')
 
-  // Upsert teams
+  // Insert the 8 real teams
   const teamInserts = Object.values(TEAM_MAP).map(t => ({
     name: t.name,
     ticket_allocation: t.ticket_allocation,
   }))
   const { data: insertedTeams, error: teamErr } = await service
     .from('teams')
-    .upsert(teamInserts, { onConflict: 'name', ignoreDuplicates: false })
+    .insert(teamInserts)
     .select('id, name')
   if (teamErr) return NextResponse.json({ error: `Teams: ${teamErr.message}` }, { status: 500 })
 
-  // Build name → id map
-  const { data: allTeams } = await service.from('teams').select('id, name')
+  // Build name → id map from freshly inserted teams
   const teamIdMap: Record<string, string> = {}
-  for (const t of allTeams || []) {
+  for (const t of insertedTeams || []) {
     for (const [key, val] of Object.entries(TEAM_MAP)) {
       if (val.name === t.name) teamIdMap[key] = t.id
     }

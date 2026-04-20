@@ -8,7 +8,7 @@ export function SeedButton() {
   const [msg, setMsg] = useState('')
 
   async function handleSeed() {
-    if (!confirm('Import all 170 ticket records from the 2026 show? This will add people and tickets to the database.')) return
+    if (!confirm('This will DELETE all placeholder teams/tickets and import the real 2026 show data (170 ticket holders, 8 teams). Board accounts are preserved. Continue?')) return
     setState('loading')
     try {
       const res = await fetch('/api/seed-demo', { method: 'POST' })
@@ -37,7 +37,7 @@ export function SeedButton() {
       )}
       <button
         onClick={handleSeed}
-        disabled={state === 'loading' || state === 'done'}
+        disabled={state === 'loading'}
         style={{
           display: 'flex', alignItems: 'center', gap: 8,
           padding: '8px 16px', borderRadius: 10, fontSize: 13, fontWeight: 600,
