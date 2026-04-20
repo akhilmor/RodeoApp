@@ -280,22 +280,29 @@ export async function POST() {
 
     const email = `${row.fn.toLowerCase().replace(/\s+/g, '')}.${row.ln.toLowerCase().replace(/\s+/g, '')}.${i}@show.raasrodeo2026.internal`
 
-    const { data: newPerson, error: pErr } = await service
-      .from('people')
-      .insert({
-        first_name: row.fn,
-        last_name: row.ln,
-        email,
-        phone: row.phone ?? null,
-        role_type: role,
-        position,
-        team_id: (role === 'competitor') ? teamId : null,
-      })
-      .select('id')
-      .single()
+    const baseFields = {
+      first_name: row.fn, last_name: row.ln,
+      email, phone: row.phone ?? null, position,
+    }
 
-    if (pErr || !newPerson) {
-      errors.push(`Person ${row.fn} ${row.ln}: ${pErr?.message}`)
+    // Try preferred role+team, fall back through progressively simpler inserts
+    const attempts = [
+      { role_type: role, team_id: role === 'competitor' ? teamId : null },
+      { role_type: 'audience', team_id: null },
+    ]
+
+    let newPerson: { id: string } | null = null
+    for (const attempt of attempts) {
+      const { data, error: pErr } = await service
+        .from('people')
+        .insert({ ...baseFields, ...attempt })
+        .select('id')
+        .single()
+      if (!pErr && data) { newPerson = data; break }
+    }
+
+    if (!newPerson) {
+      errors.push(`Person ${row.fn} ${row.ln}: all insert attempts failed`)
       continue
     }
 
