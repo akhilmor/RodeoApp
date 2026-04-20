@@ -306,7 +306,8 @@ export async function POST() {
       continue
     }
 
-    const { error: tErr } = await service.from('tickets').insert({ person_id: newPerson.id, type, status })
+    const ticketNotes = type === 'ff' && row.team ? (TEAM_MAP[row.team as keyof typeof TEAM_MAP]?.name ?? null) : null
+    const { error: tErr } = await service.from('tickets').insert({ person_id: newPerson.id, type, status, notes: ticketNotes })
 
     if (tErr) {
       errors.push(`Ticket ${row.fn} ${row.ln}: ${tErr.message}`)

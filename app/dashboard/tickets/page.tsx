@@ -69,7 +69,7 @@ export default function TicketsPage() {
   }
 
   const nextStatus: Record<string, string> = {
-    reserved: 'paid', paid: 'picked_up',
+    reserved: 'paid',
   }
 
   const q = search.toLowerCase()
@@ -135,7 +135,7 @@ export default function TicketsPage() {
               <th className="text-left px-6 py-3 text-gray-500 font-medium">Team</th>
               <th className="text-left px-6 py-3 text-gray-500 font-medium">Type</th>
               <th className="text-left px-6 py-3 text-gray-500 font-medium">Status</th>
-              <th className="text-left px-6 py-3 text-gray-500 font-medium">Notes</th>
+              <th className="text-left px-6 py-3 text-gray-500 font-medium">School</th>
               <th className="px-6 py-3" />
             </tr>
           </thead>
@@ -165,7 +165,9 @@ export default function TicketsPage() {
                     {STATUS_LABELS[t.status] || t.status}
                   </Badge>
                 </td>
-                <td className="px-6 py-3 text-gray-400 text-xs max-w-48 truncate">{t.notes || '—'}</td>
+                <td className="px-6 py-3 text-xs max-w-48 truncate" style={{ color: t.type === 'ff' ? '#e2e8f0' : '#4b5563' }}>
+                  {t.type === 'ff' ? (t.notes || '—') : 'N/A'}
+                </td>
                 <td className="px-6 py-3">
                   {nextStatus[t.status] && (
                     <button onClick={() => updateStatus(t.id, nextStatus[t.status])}
